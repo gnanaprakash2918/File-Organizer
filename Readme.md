@@ -1,7 +1,7 @@
-This is my File Organizer
+# File Organizer
 
-# TODO
+# Goal
 
-- handle already existing files
-- handle errors for already existing directories and folder
-- handle permission error
+- Scan through all the files
+- Find duplicates and delete them
+- Organize files into folders based on extension
