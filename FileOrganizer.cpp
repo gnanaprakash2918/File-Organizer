@@ -1,6 +1,7 @@
 #include <iostream>
 #include <filesystem>
 #include <string>
+#include <unordered_map>
 #include <fstream>
 
 int main() {
@@ -8,6 +9,9 @@ int main() {
         // Get the Current Working Directory
         std::filesystem::path current_working_directory = std::filesystem::current_path();
 
+        // Map to store {file_hash -> file}
+        std::unordered_map<std::size_t, std::string> file_hash_map;
+        
         // Iterate over the current directory
         for(const std::filesystem::directory_entry& entry : std::filesystem::directory_iterator(current_working_directory)) {
             if(entry.is_regular_file()) {
