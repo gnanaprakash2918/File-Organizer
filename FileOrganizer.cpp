@@ -1,32 +1,38 @@
 #include <iostream>
-#include <filesystem>
-#include <string>
-#include <unordered_map>
 #include <fstream>
+#include <unordered_map>
+#include <filesystem>
+#include <vector>
+#include <openssl/md5.h>
+#include <string>
+
+namespace fs = std::filesystem;
+
+std::string compute_md5(std::string& file_path) {
+    std::cout << file_path << std::endl;
+    return "";
+}
 
 int main() {
-    try {
-        // Get the Current Working Directory
-        std::filesystem::path current_working_directory = std::filesystem::current_path();
+    // Hash {md5_string -> file}
+    std::unordered_map<std::string, std::string> hash_map;
 
-        // Map to store {file_hash -> file}
-        std::unordered_map<std::size_t, std::string> file_hash_map;
-        
-        // Iterate over the current directory
-        for(const std::filesystem::directory_entry& entry : std::filesystem::directory_iterator(current_working_directory)) {
-            if(entry.is_regular_file()) {
-                // Regular File (No directories or shortcut links)
-                std::cout << entry.path().string() << std::endl;
+    // Iterate over files in the current working directory
+    for (const auto& entry : fs::directory_iterator(".")) {
 
-                // Open the file in read mode
-                std::ifstream file(entry.path(), std::ios::binary);
-                if(file) {
-                    std::string file_content(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
-                }
+        // Check if its a regular file (regular_file enum = 1)
+        // Skips Directories
+        if (entry.is_regular_file()) {
+            std::string file_path = entry.path().string();
+
+            // Checking the 2nd Index, as 
+            if(file_path[2] == '.') {
+                std::cout << file_path << " is a hidden file ! Skipping it";
             }
+
+            std::string md5_hash = compute_md5(file_path);
         }
     }
-     catch (const std::filesystem::filesystem_error &e) {
-        std::cout << e.what();
-     }
+
+    return 0;
 }
