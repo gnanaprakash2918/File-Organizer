@@ -112,10 +112,42 @@ int main()
     for (auto &[key, value] : hash_map)
     {
         std::string file_path = value.first;
-        int extension_dot_index = file_path.find_last_of('.');
 
+        // Extract the file extension
+        int extension_dot_index = file_path.find_last_of('.');
         std::string file_extension = file_path.substr(extension_dot_index + 1);
-        std::cout << file_extension << std::endl;
+
+        // Directory to store files with the same extension
+        std::string dir_path = file_extension + " files";
+        if (!fs::exists(dir_path))
+        {
+            std::cout << "Creating " << file_extension + " files folder" << std::endl;
+
+            if (!fs::create_directories(dir_path))
+            {
+                throw std::runtime_error("Failed to create directory: " + dir_path);
+            }
+        }
+
+        // Construct the full file path (directory + original file name)
+        // Extract original file name
+        std::string file_name = fs::path(file_path).filename().string();
+        std::string new_file_path = dir_path + "/" + file_name;
+
+        // Write the file content to the new path
+        std::ofstream out(new_file_path, std::ios::binary);
+        if (!out)
+        {
+            throw std::runtime_error("Failed to open file for writing: " + new_file_path);
+        }
+        out.write(value.second.c_str(), value.second.size());
+
+        if (!out.good())
+        {
+            throw std::runtime_error("Failed to write to file: " + new_file_path);
+        }
+
+        std::cout << "File Written Successfully: " << new_file_path << std::endl;
     }
 
     return 0;
