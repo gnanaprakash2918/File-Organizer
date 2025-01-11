@@ -9,3 +9,6 @@
 # Dependencies
 
 - Source files of [Win64OpenSSL_Light-3_4_0.exe](https://slproweb.com/products/Win32OpenSSL.html)
+
+- compile using this command
+  ` g++ .\FileOrganizer.cpp -o FileOrganizer -lcrypto`

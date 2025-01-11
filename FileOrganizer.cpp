@@ -68,8 +68,8 @@ std::string compute_md5(const std::string &file_path)
 
 int main()
 {
-    // Hash {md5_string -> file}
-    std::unordered_map<std::string, std::string> hash_map;
+    // Hash {md5_string -> {path, file}}
+    std::unordered_map<std::string, std::pair<std::string, std::string>> hash_map;
 
     // Iterate over files in the current working directory
     for (const auto &entry : fs::directory_iterator("."))
@@ -82,7 +82,7 @@ int main()
             // Skip hidden files
             if (file_path[2] == '.')
             {
-                std::cout << file_path << " is a hidden file! Skipping it.\n";
+                std::cout << file_path << " is a hidden file! Skipping it.\n\n";
                 continue;
             }
 
@@ -90,12 +90,32 @@ int main()
             {
                 std::string md5_hash = compute_md5(file_path);
                 std::cout << "File: " << file_path << "\nMD5: " << md5_hash << "\n\n";
+
+                // Open the file in binary mode
+                std::ifstream file(file_path, std::ios::binary);
+                if (!file)
+                {
+                    throw std::runtime_error("Failed to open file: " + file_path);
+                }
+
+                // Read the file into a buffer
+                std::string buffer(std::istreambuf_iterator<char>(file), {});
+                hash_map[md5_hash] = {file_path, buffer};
             }
             catch (const std::exception &e)
             {
                 std::cerr << "Error processing file " << file_path << ": " << e.what() << "\n";
             }
         }
+    }
+
+    for (auto &[key, value] : hash_map)
+    {
+        std::string file_path = value.first;
+        int extension_dot_index = file_path.find_last_of('.');
+
+        std::string file_extension = file_path.substr(extension_dot_index + 1);
+        std::cout << file_extension << std::endl;
     }
 
     return 0;
