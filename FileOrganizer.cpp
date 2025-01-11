@@ -90,6 +90,15 @@ int main()
             {
                 std::string md5_hash = compute_md5(file_path);
                 std::cout << "File: " << file_path << "\nMD5: " << md5_hash << "\n\n";
+                if (file_path == "./FileOrganizer.exe")
+                {
+                    std::cout << "Cannot delete the running executable file." << std::endl;
+                    continue;
+                }
+                else if (fs::exists(file_path))
+                {
+                    fs::remove(file_path);
+                }
 
                 // Open the file in binary mode
                 std::ifstream file(file_path, std::ios::binary);
